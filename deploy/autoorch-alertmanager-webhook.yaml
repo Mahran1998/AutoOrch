@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: autoorch-webhook
+  labels:
+    app: autoorch
+spec:
+  selector:
+    app: autoorch
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autoorch-webhook
+  labels:
+    app: autoorch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: autoorch
+  template:
+    metadata:
+      labels:
+        app: autoorch
+    spec:
+      containers:
+        - name: webhook
+          image: autoorch-webhook:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ENV
+              value: "dev"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10

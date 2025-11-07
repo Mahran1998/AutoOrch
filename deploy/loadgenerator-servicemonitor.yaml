@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: loadgenerator-servicemonitor
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: loadgenerator
+  namespaceSelector:
+    matchNames:
+      - default
+  endpoints:
+  - port: metrics
+    interval: 15s
+    path: /metrics
