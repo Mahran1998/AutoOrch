@@ -1,0 +1,9 @@
+experiment_id: exp1_autoscale_20251122_203401
+name: exp1_autoscale
+start_time_human: 2025-11-22T20:34:01+01:00
+description: >-
+  Experiment 1 autoscale pattern: 400/500 RPS no_action,
+  then 30 x 10s overload steps from 600 to 1200 RPS,
+  followed by recovery at 30 RPS and long low-load tail at 40 RPS.
+start_epoch: 1763840043
+end_epoch: 1763841485

@@ -13,6 +13,7 @@ spec:
         image: hashicorp/http-echo:0.2.3
         args: ["-text=hello"]
         ports: [{ containerPort: 5678 }]
+        resources: {}
 ---
 apiVersion: v1
 kind: Service
