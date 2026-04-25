@@ -1,0 +1,40 @@
+---
+- name: Collect deployment diagnostics for AutoOrch
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    namespace: "{{ namespace | default('default') }}"
+    workload: "{{ workload | default('demo-backend') }}"
+  tasks:
+    - name: Describe deployment
+      ansible.builtin.command:
+        argv:
+          - kubectl
+          - describe
+          - "deployment/{{ workload }}"
+          - -n
+          - "{{ namespace }}"
+      register: deployment_describe
+      changed_when: false
+
+    - name: Get pods for workload
+      ansible.builtin.command:
+        argv:
+          - kubectl
+          - get
+          - pods
+          - -n
+          - "{{ namespace }}"
+          - -l
+          - "app={{ workload }}"
+          - -o
+          - wide
+      register: pods_get
+      changed_when: false
+
+    - name: Print diagnostics
+      ansible.builtin.debug:
+        msg:
+          describe: "{{ deployment_describe.stdout }}"
+          pods: "{{ pods_get.stdout }}"

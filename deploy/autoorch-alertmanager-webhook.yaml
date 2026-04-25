@@ -37,6 +37,42 @@ spec:
           env:
             - name: ENV
               value: "dev"
+            - name: PROM_BASE_URL
+              value: "http://prometheus-stack-kube-prom-prometheus.monitoring:9090"
+            - name: TARGET_NAMESPACE
+              value: "default"
+            - name: TARGET_WORKLOAD
+              value: "demo-backend"
+            - name: TARGET_POD_REGEX
+              value: "demo-backend-.*"
+            - name: ALLOWED_NAMESPACES
+              value: "default"
+            - name: ALLOWED_WORKLOADS
+              value: "demo-backend"
+            - name: P_AUTO_SCALE_THRESHOLD
+              value: "0.90"
+            - name: P_AUTO_RESTART_THRESHOLD
+              value: "0.90"
+            - name: AUTOSCALE_MODEL_PATH
+              value: "/app/webhook/models/autoscale_classifier.joblib"
+            - name: AUTOSCALE_META_PATH
+              value: "/app/webhook/models/autoscale_classifier_meta.json"
+            - name: RESTART_MODEL_PATH
+              value: "/app/webhook/models/restart_classifier.joblib"
+            - name: RESTART_META_PATH
+              value: "/app/webhook/models/restart_classifier_meta.json"
+            - name: CONSECUTIVE_ESCALATION_COUNT
+              value: "2"
+            - name: CONSECUTIVE_MEMORY_SECONDS
+              value: "300"
+            - name: COOLDOWN_SECONDS
+              value: "300"
+            - name: MAX_REPLICAS
+              value: "5"
+            - name: ACTION_MODE
+              value: "stub"
+            - name: COLLECT_DIAGNOSTICS_ON_NOTIFY
+              value: "true"
           readinessProbe:
             httpGet:
               path: /health

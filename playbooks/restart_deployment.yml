@@ -1,0 +1,19 @@
+---
+- name: Restart a deployment for AutoOrch
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    namespace: "{{ namespace | default('default') }}"
+    workload: "{{ workload | default('demo-backend') }}"
+  tasks:
+    - name: Restart deployment rollout via kubectl
+      ansible.builtin.command:
+        argv:
+          - kubectl
+          - rollout
+          - restart
+          - "deployment/{{ workload }}"
+          - -n
+          - "{{ namespace }}"
+      changed_when: true

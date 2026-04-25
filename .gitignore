@@ -1,7 +1,15 @@
 venv/
+.venv/
 __pycache__/
 *.pyc
 *.zip
+.pytest_cache/
+.mypy_cache/
+*.joblib.tmp
+
+# Local experiment/runtime byproducts
+*.log
+*.pid
 
 # If you want to ignore only raw per-experiment exports (optional):
 # experiments/*/csv/*.csv

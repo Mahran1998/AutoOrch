@@ -1,0 +1,102 @@
+---
+- name: Notify Human - AlertManager Integration for AutoOrch
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    namespace: "{{ namespace | default('default') }}"
+    workload: "{{ workload | default('demo-backend') }}"
+    decision_reason: "{{ decision_reason | default('High load detected, manual intervention recommended') }}"
+    alert_severity: "{{ alert_severity | default('critical') }}"
+    alertmanager_url: "{{ alertmanager_url | default('http://localhost:9093') }}"
+  tasks:
+    - name: Log notify_human decision
+      ansible.builtin.debug:
+        msg: |
+          [NOTIFY_HUMAN] AutoOrch Decision
+          Namespace: {{ namespace }}
+          Workload: {{ workload }}
+          Reason: {{ decision_reason }}
+          Severity: {{ alert_severity }}
+          Time: {{ ansible.date_time.iso8601 }}
+
+    - name: Collect deployment diagnostics
+      ansible.builtin.command:
+        argv:
+          - kubectl
+          - describe
+          - "deployment/{{ workload }}"
+          - -n
+          - "{{ namespace }}"
+      register: deployment_diagnostics
+      ignore_errors: true
+
+    - name: Get pod status
+      ansible.builtin.command:
+        argv:
+          - kubectl
+          - get
+          - pods
+          - -n
+          - "{{ namespace }}"
+          - -l
+          - "app={{ workload }}"
+          - -o
+          - json
+      register: pod_status_json
+      ignore_errors: true
+
+    - name: Get recent pod events
+      ansible.builtin.command:
+        argv:
+          - kubectl
+          - get
+          - events
+          - -n
+          - "{{ namespace }}"
+          - --sort-by=.metadata.creationTimestamp
+      register: pod_events
+      ignore_errors: true
+
+    - name: Store diagnostics
+      ansible.builtin.copy:
+        content: |
+          Diagnostics collected for notify_human decision
+          Time: {{ ansible.date_time.iso8601 }}
+          Namespace: {{ namespace }}
+          Workload: {{ workload }}
+          Decision Reason: {{ decision_reason }}
+          
+          === DEPLOYMENT DIAGNOSTICS ===
+          {{ deployment_diagnostics.stdout | default('N/A') }}
+          
+          === POD EVENTS ===
+          {{ pod_events.stdout | default('N/A') }}
+        dest: "/tmp/autoorch_notify_human_{{ ansible.date_time.iso8601_basic_short }}.log"
+      ignore_errors: true
+
+    - name: Display collected diagnostics
+      ansible.builtin.debug:
+        msg: "Diagnostics stored and human notification logged"
+
+    - name: Send alert to AlertManager (if available)
+      ansible.builtin.uri:
+        url: "{{ alertmanager_url }}/api/v1/alerts"
+        method: POST
+        status_code: [200, 401, 503]
+        body_format: json
+        body:
+          - labels:
+              alertname: "AutoOrch_HumanNotification"
+              severity: "{{ alert_severity }}"
+              namespace: "{{ namespace }}"
+              workload: "{{ workload }}"
+            annotations:
+              summary: "AutoOrch detected issue requiring human review"
+              description: "{{ decision_reason }}"
+      ignore_errors: true
+      register: alertmanager_result
+
+    - name: Log alert result
+      ansible.builtin.debug:
+        msg: "AlertManager response: {{ alertmanager_result.status | default('No response') }}"
