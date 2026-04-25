@@ -20,7 +20,7 @@ NEGATIVE_LABEL = "no_action"
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset", default="experiments/dataset_restart.csv")
-    parser.add_argument("--label-col", default="action_label")
+    parser.add_argument("--label-col", default="label")
     parser.add_argument("--group-col", default="experiment_id")
     parser.add_argument("--outdir", default="webhook/models")
     parser.add_argument("--reportdir", default="ml/reports")

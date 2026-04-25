@@ -46,19 +46,20 @@ def main() -> None:
                 df[canonical] = df[alias]
                 break
 
-    missing = [name for name in FEATURES if name not in df.columns]
+    required_columns = [*FEATURES, "window_start", "window_end"]
+    missing = [name for name in required_columns if name not in df.columns]
     if missing:
-        raise ValueError(f"Missing required feature columns: {missing}")
+        raise ValueError(f"Missing required restart dataset columns: {missing}")
 
     dataset = df.copy()
     if "experiment_id" not in dataset.columns:
         dataset["experiment_id"] = args.experiment_id or Path(args.input).stem
 
-    dataset["action_label"] = dataset.apply(
+    dataset["label"] = dataset.apply(
         lambda row: label_restart(row, args.error_threshold, args.cpu_upper, args.p95_threshold),
         axis=1,
     )
-    class_counts = dataset["action_label"].value_counts().to_dict()
+    class_counts = dataset["label"].value_counts().to_dict()
     if len(class_counts) < 2:
         raise ValueError(
             "Restart dataset contains only one class after labeling. "
@@ -68,12 +69,12 @@ def main() -> None:
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
 
-    columns = [name for name in ["timestamp", *FEATURES, "experiment_id", "action_label"] if name in dataset.columns]
+    columns = [*FEATURES, "label", "experiment_id", "window_start", "window_end"]
     dataset[columns].to_csv(output, index=False)
 
     print(f"Saved restart dataset: {output}")
     print(f"Rows: {len(dataset)}")
-    print(dataset["action_label"].value_counts().to_string())
+    print(dataset["label"].value_counts().to_string())
 
 
 if __name__ == "__main__":
