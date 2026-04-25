@@ -312,9 +312,9 @@ EXP_END="$(date +%s)"
 echo "end_epoch: ${EXP_END}" >> "${META_FILE}"
 echo "end_time_human: $(date --iso-8601=seconds)" >> "${META_FILE}"
 
-query_range 'sum(rate(http_requests_total{endpoint="/api/test"}[1m]))' requests_rate
+query_range 'sum(rate(http_requests_total{exported_endpoint="/api/test"}[1m]))' requests_rate
 query_range 'histogram_quantile(0.95, sum(rate(http_request_latency_seconds_bucket[1m])) by (le))' p95_latency
-query_range 'sum(rate(http_requests_total{endpoint="/api/test",status=~"5.."}[1m]))' http_5xx
+query_range 'sum(rate(http_requests_total{exported_endpoint="/api/test",status=~"5.."}[1m]))' http_5xx
 query_range "sum(rate(container_cpu_usage_seconds_total{namespace=\"${KUBE_NS}\",pod=~\"controllable-backend-.*\",container!=\"POD\"}[1m]))" container_cpu
 query_range "sum(kube_pod_container_resource_limits{namespace=\"${KUBE_NS}\",pod=~\"controllable-backend-.*\",resource=\"cpu\"})" cpu_limit
 query_range "(sum(rate(container_cpu_usage_seconds_total{namespace=\"${KUBE_NS}\",pod=~\"controllable-backend-.*\",container!=\"POD\"}[1m])) / ${CPU_LIMIT_CORES})" cpu_saturation

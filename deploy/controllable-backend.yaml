@@ -49,6 +49,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: controllable-backend
+  labels:
+    app: controllable-backend
 spec:
   selector:
     app: controllable-backend
@@ -56,3 +58,22 @@ spec:
   - port: 5000
     targetPort: 5000
     name: http
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: controllable-backend
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: controllable-backend
+  namespaceSelector:
+    matchNames:
+    - default
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 15s
