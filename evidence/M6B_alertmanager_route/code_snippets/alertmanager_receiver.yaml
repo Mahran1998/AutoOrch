@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: autoorch-m6-test-route
+  namespace: default
+spec:
+  route:
+    receiver: autoorch-webhook
+    matchers:
+      - name: alertname
+        matchType: =
+        value: AutoOrchM6TestAlert
+      - name: service
+        matchType: =
+        value: controllable-backend
+      - name: deployment
+        matchType: =
+        value: controllable-backend
+  receivers:
+    - name: autoorch-webhook
+      webhookConfigs:
+        - url: http://autoorch-webhook.default.svc.cluster.local:8080/alert
+          sendResolved: true

@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: autoorch-m6-test-alert
+  namespace: default
+  labels:
+    release: prometheus-stack
+    purpose: autoorch-m6
+spec:
+  groups:
+    - name: autoorch-m6-test.rules
+      rules:
+        - alert: AutoOrchM6TestAlert
+          expr: vector(1)
+          for: 0s
+          labels:
+            severity: warning
+            namespace: default
+            service: controllable-backend
+            deployment: controllable-backend
+            m6_test: "true"
+          annotations:
+            summary: AutoOrch M6 routing test alert
+            description: Safe M6-only test alert for Prometheus to Alertmanager to AutoOrch routing.

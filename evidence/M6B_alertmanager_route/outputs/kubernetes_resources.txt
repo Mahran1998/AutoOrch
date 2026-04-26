@@ -1,0 +1,41 @@
+$ kubectl get pods -n monitoring
+NAME                                                     READY   STATUS    RESTARTS        AGE
+alertmanager-prometheus-stack-kube-prom-alertmanager-0   2/2     Running   4 (31m ago)     3h26m
+prometheus-prometheus-stack-kube-prom-prometheus-0       2/2     Running   199 (31m ago)   169d
+prometheus-stack-grafana-5cccd95cbf-9bb5l                3/3     Running   10 (21m ago)    3h26m
+prometheus-stack-kube-prom-operator-8d6df4697-vsbnj      1/1     Running   402 (21m ago)   169d
+prometheus-stack-kube-state-metrics-9bbd469b9-8g86z      1/1     Running   668 (24m ago)   169d
+prometheus-stack-prometheus-node-exporter-krrhs          1/1     Running   182 (27m ago)   169d
+prometheus-stack-prometheus-node-exporter-s45fr          1/1     Running   196 (20m ago)   169d
+
+$ kubectl get svc -n monitoring
+NAME                                        TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+alertmanager-operated                       ClusterIP   None            <none>        9093/TCP,9094/TCP,9094/UDP   3h26m
+prometheus-operated                         ClusterIP   None            <none>        9090/TCP                     169d
+prometheus-stack-grafana                    ClusterIP   10.96.93.75     <none>        80/TCP                       169d
+prometheus-stack-kube-prom-alertmanager     ClusterIP   10.96.6.49      <none>        9093/TCP,8080/TCP            3h26m
+prometheus-stack-kube-prom-operator         ClusterIP   10.96.66.21     <none>        443/TCP                      169d
+prometheus-stack-kube-prom-prometheus       ClusterIP   10.96.232.154   <none>        9090/TCP,8080/TCP            169d
+prometheus-stack-kube-state-metrics         ClusterIP   10.96.186.239   <none>        8080/TCP                     169d
+prometheus-stack-prometheus-node-exporter   ClusterIP   10.96.227.205   <none>        9100/TCP                     169d
+
+$ kubectl get alertmanager -A
+NAMESPACE    NAME                                      VERSION   REPLICAS   READY   RECONCILED   AVAILABLE   AGE
+monitoring   prometheus-stack-kube-prom-alertmanager   v0.29.0   1          1       True         True        3h26m
+
+$ kubectl get alertmanagerconfig -A
+NAMESPACE   NAME                     AGE
+default     autoorch-m6-test-route   3h22m
+
+$ kubectl get pods -n default
+NAME                                    READY   STATUS             RESTARTS       AGE
+autoorch-webhook-67bc968499-hk82v       1/1     Running            12 (13m ago)   4h28m
+controllable-backend-64fdfd7ff4-mnb4d   1/1     Running            11 (27m ago)   27h
+demo-backend-5695cdb566-smbmb           1/1     Running            12 (31m ago)   8d
+loadgenerator-768c94777f-dglv6          1/1     Running            12 (31m ago)   8d
+test                                    0/1     ImagePullBackOff   0              3d14h
+
+$ kubectl get deploy -n default autoorch-webhook controllable-backend
+NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
+autoorch-webhook       1/1     1            1           171d
+controllable-backend   1/1     1            1           3d14h

@@ -1,0 +1,27 @@
+$ curl -s http://127.0.0.1:9093/api/v2/alerts
+
+Relevant M6 alert excerpt:
+
+{
+  "annotations": {
+    "description": "Safe M6-only test alert for Prometheus to Alertmanager to AutoOrch routing.",
+    "summary": "AutoOrch M6 routing test alert"
+  },
+  "receivers": [
+    {
+      "name": "default/autoorch-m6-test-route/autoorch-webhook"
+    }
+  ],
+  "status": {
+    "state": "active"
+  },
+  "labels": {
+    "alertname": "AutoOrchM6TestAlert",
+    "deployment": "controllable-backend",
+    "m6_test": "true",
+    "namespace": "default",
+    "prometheus": "monitoring/prometheus-stack-kube-prom-prometheus",
+    "service": "controllable-backend",
+    "severity": "warning"
+  }
+}

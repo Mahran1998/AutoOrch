@@ -1,0 +1,17 @@
+$ kubectl get deploy -n default autoorch-webhook -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="ACTION_MODE")].value}'
+stub
+
+$ kubectl get deploy -n default autoorch-webhook controllable-backend
+NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
+autoorch-webhook       1/1     1            1           171d
+controllable-backend   1/1     1            1           3d14h
+
+$ kubectl get prometheusrule -n default autoorch-m6-test-alert
+Error from server (NotFound): prometheusrules.monitoring.coreos.com "autoorch-m6-test-alert" not found
+
+Conclusion:
+
+- AutoOrch remained in stub action mode.
+- AutoOrch and controllable-backend remained available.
+- The temporary always-firing M6 test rule was deleted after capture.
+- No real restart or scale remediation was performed.

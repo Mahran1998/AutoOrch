@@ -1,0 +1,23 @@
+$ curl -sG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=ALERTS{alertname="AutoOrchM6TestAlert"}'
+
+{
+  "status": "success",
+  "data": {
+    "resultType": "vector",
+    "result": [
+      {
+        "metric": {
+          "__name__": "ALERTS",
+          "alertname": "AutoOrchM6TestAlert",
+          "alertstate": "firing",
+          "deployment": "controllable-backend",
+          "m6_test": "true",
+          "namespace": "default",
+          "service": "controllable-backend",
+          "severity": "warning"
+        },
+        "value": [1777243907.698, "1"]
+      }
+    ]
+  }
+}

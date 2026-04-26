@@ -1,0 +1,23 @@
+$ curl -s http://127.0.0.1:8080/metrics
+
+# HELP autoorch_alerts_received_total Total alerts received by AutoOrch
+# TYPE autoorch_alerts_received_total counter
+autoorch_alerts_received_total 3.0
+
+# HELP autoorch_decisions_total Total decisions made by AutoOrch
+# TYPE autoorch_decisions_total counter
+autoorch_decisions_total{decision="no_action"} 3.0
+
+# HELP autoorch_notify_human_total Number of notify_human decisions
+# TYPE autoorch_notify_human_total counter
+autoorch_notify_human_total 0.0
+
+# HELP autoorch_actions_total Total actions attempted by AutoOrch
+# TYPE autoorch_actions_total counter
+
+# HELP autoorch_action_failures_total Failed actions attempted by AutoOrch
+# TYPE autoorch_action_failures_total counter
+
+# HELP autoorch_restart_model_predictions_total Restart model probability evaluations
+# TYPE autoorch_restart_model_predictions_total counter
+autoorch_restart_model_predictions_total{result="below_threshold"} 3.0
