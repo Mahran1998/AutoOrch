@@ -330,7 +330,11 @@ def fetch_signal_bundle(target: Dict[str, Any]) -> Tuple[Dict[str, float], Resta
 
     rps, missing, errors = _query_signal(
         name="rps",
-        candidates=[f"sum(rate(loadgen_requests_total[{prom_window}]))"],
+        candidates=[
+            f'sum(rate(http_requests_total{{exported_endpoint="/api/test"}}[{prom_window}]))',
+            f'sum(rate(http_requests_total{{endpoint="/api/test"}}[{prom_window}]))',
+            f"sum(rate(loadgen_requests_total[{prom_window}]))",
+        ],
         required=True,
     )
     required_missing.extend(missing)
@@ -339,6 +343,7 @@ def fetch_signal_bundle(target: Dict[str, Any]) -> Tuple[Dict[str, float], Resta
     p95, missing, errors = _query_signal(
         name="p95",
         candidates=[
+            f"histogram_quantile(0.95, sum(rate(http_request_latency_seconds_bucket[{prom_window}])) by (le))",
             f"histogram_quantile(0.95, sum(rate(loadgen_request_latency_seconds_bucket[{prom_window}])) by (le))"
         ],
         required=True,
@@ -349,6 +354,8 @@ def fetch_signal_bundle(target: Dict[str, Any]) -> Tuple[Dict[str, float], Resta
     http_5xx_rate, _, errors = _query_signal(
         name="http_5xx_rate",
         candidates=[
+            f'sum(rate(http_requests_total{{exported_endpoint="/api/test",status=~"5.."}}[{prom_window}]))',
+            f'sum(rate(http_requests_total{{endpoint="/api/test",status=~"5.."}}[{prom_window}]))',
             f'sum(rate(http_requests_total{{code=~"5.."}}[{prom_window}]))',
             f'sum(rate(loadgen_requests_total{{status=~"5..|ERR"}}[{prom_window}]))',
         ],

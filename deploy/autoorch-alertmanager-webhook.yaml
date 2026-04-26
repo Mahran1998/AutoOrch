@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: webhook
-          image: autoorch-webhook:local
+          image: autoorch-webhook:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -42,13 +42,15 @@ spec:
             - name: TARGET_NAMESPACE
               value: "default"
             - name: TARGET_WORKLOAD
-              value: "demo-backend"
+              value: "controllable-backend"
             - name: TARGET_POD_REGEX
-              value: "demo-backend-.*"
+              value: "controllable-backend-.*"
             - name: ALLOWED_NAMESPACES
               value: "default"
             - name: ALLOWED_WORKLOADS
-              value: "demo-backend"
+              value: "controllable-backend"
+            - name: CPU_LIMIT_FALLBACK
+              value: "0.5"
             - name: P_AUTO_SCALE_THRESHOLD
               value: "0.90"
             - name: P_AUTO_RESTART_THRESHOLD
@@ -85,3 +87,22 @@ spec:
               port: 8080
             initialDelaySeconds: 10
             periodSeconds: 10
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: autoorch-webhook
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: autoorch
+  namespaceSelector:
+    matchNames:
+      - default
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
