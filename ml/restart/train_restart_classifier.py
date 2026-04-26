@@ -83,12 +83,13 @@ def main() -> None:
             stratify=y,
         )
 
-    model = RandomForestClassifier(
-        n_estimators=150,
-        max_depth=8,
-        class_weight="balanced",
-        random_state=args.random_state,
-    )
+    hyperparameters = {
+        "n_estimators": 150,
+        "max_depth": 8,
+        "class_weight": "balanced",
+        "random_state": args.random_state,
+    }
+    model = RandomForestClassifier(**hyperparameters)
     model.fit(X_train, y_train)
 
     positive_index = list(model.classes_).index(POSITIVE_LABEL)
@@ -101,6 +102,14 @@ def main() -> None:
     labels = [NEGATIVE_LABEL, POSITIVE_LABEL]
     cm = confusion_matrix(y_test, y_pred, labels=labels)
     report_txt = classification_report(y_test, y_pred, labels=labels, digits=4, zero_division=0)
+    report_dict = classification_report(
+        y_test,
+        y_pred,
+        labels=labels,
+        digits=4,
+        zero_division=0,
+        output_dict=True,
+    )
     precision, recall, f1, _ = precision_recall_fscore_support(
         y_test,
         y_pred,
@@ -133,22 +142,23 @@ def main() -> None:
         "label_classes": list(model.classes_),
         "class_distribution": {str(label): int(count) for label, count in class_distribution.items()},
         "threshold": args.threshold,
+        "model_type": "RandomForestClassifier",
+        "hyperparameters": hyperparameters,
         "model_path": str(model_path.as_posix()),
         "metadata_path": str(meta_path.as_posix()),
         "split": split_info,
+        "train_test_split_method": split_info["type"],
         "train_rows": int(len(X_train)),
         "test_rows": int(len(X_test)),
         "model": {
             "type": "RandomForestClassifier",
-            "n_estimators": 150,
-            "max_depth": 8,
-            "class_weight": "balanced",
-            "random_state": args.random_state,
+            **hyperparameters,
         },
         "metrics_at_threshold": {
             "precision": float(precision),
             "recall": float(recall),
             "f1": float(f1),
+            "classification_report": report_dict,
             "confusion_matrix_labels": labels,
             "confusion_matrix": cm.tolist(),
         },

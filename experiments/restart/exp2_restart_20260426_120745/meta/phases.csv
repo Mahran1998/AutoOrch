@@ -1,0 +1,4 @@
+phase,expected_label,start_epoch,end_epoch,rps,latency_ms,error_injection
+healthy_baseline,no_action,1777198076,1777198376,30,0,false
+error_latency_fault,auto_restart,1777198377,1777198677,30,700,true
+recovery,no_action,1777198677,1777198977,30,0,false

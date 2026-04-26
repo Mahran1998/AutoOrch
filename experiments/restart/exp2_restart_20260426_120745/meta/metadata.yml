@@ -1,0 +1,14 @@
+experiment_id: exp2_restart_20260426_120745
+name: exp2_restart
+target: controllable-backend
+target_url: http://controllable-backend:5000/api/test
+start_time_human: 2026-04-26T12:07:45+02:00
+rps: 30
+concurrency: 15
+latency_ms: 700
+phase_seconds: 300
+cpu_limit_cores_fallback: 0.5
+label_rule: http_5xx_rate >= 0.20 AND cpu_sat < 0.70 AND p95 > 0.50
+start_epoch: 1777198076
+end_epoch: 1777198977
+end_time_human: 2026-04-26T12:22:57+02:00

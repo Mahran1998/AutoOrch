@@ -1,0 +1,102 @@
+{
+  "training_date": "2026-04-26T11:42:41.639535+00:00",
+  "created_at_utc": "2026-04-26T11:42:41.639535+00:00",
+  "dataset": "experiments/dataset_restart.csv",
+  "feature_order": [
+    "rps",
+    "p95",
+    "http_5xx_rate",
+    "cpu_sat"
+  ],
+  "features": [
+    "rps",
+    "p95",
+    "http_5xx_rate",
+    "cpu_sat"
+  ],
+  "label_col": "label",
+  "label_positive": "auto_restart",
+  "class_labels": [
+    "auto_restart",
+    "no_action"
+  ],
+  "label_classes": [
+    "auto_restart",
+    "no_action"
+  ],
+  "class_distribution": {
+    "no_action": 33,
+    "auto_restart": 16
+  },
+  "threshold": 0.9,
+  "model_type": "RandomForestClassifier",
+  "hyperparameters": {
+    "n_estimators": 150,
+    "max_depth": 8,
+    "class_weight": "balanced",
+    "random_state": 42
+  },
+  "model_path": "webhook/models/restart_classifier.joblib",
+  "metadata_path": "webhook/models/restart_classifier_meta.json",
+  "split": {
+    "type": "train_test_split",
+    "stratified": true
+  },
+  "train_test_split_method": "train_test_split",
+  "train_rows": 39,
+  "test_rows": 10,
+  "model": {
+    "type": "RandomForestClassifier",
+    "n_estimators": 150,
+    "max_depth": 8,
+    "class_weight": "balanced",
+    "random_state": 42
+  },
+  "metrics_at_threshold": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "classification_report": {
+      "no_action": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 7.0
+      },
+      "auto_restart": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 3.0
+      },
+      "accuracy": 1.0,
+      "macro avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 10.0
+      },
+      "weighted avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 10.0
+      }
+    },
+    "confusion_matrix_labels": [
+      "no_action",
+      "auto_restart"
+    ],
+    "confusion_matrix": [
+      [
+        7,
+        0
+      ],
+      [
+        0,
+        3
+      ]
+    ]
+  },
+  "notes": "Binary restart classifier using the same four-feature vector as autoscale."
+}

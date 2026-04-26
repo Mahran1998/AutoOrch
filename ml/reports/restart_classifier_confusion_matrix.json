@@ -1,0 +1,17 @@
+{
+  "threshold": 0.9,
+  "labels": [
+    "no_action",
+    "auto_restart"
+  ],
+  "confusion_matrix": [
+    [
+      7,
+      0
+    ],
+    [
+      0,
+      3
+    ]
+  ]
+}

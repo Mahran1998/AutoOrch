@@ -23,6 +23,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--error-threshold", type=float, default=0.20)
     parser.add_argument("--cpu-upper", type=float, default=0.70)
     parser.add_argument("--p95-threshold", type=float, default=0.50)
+    parser.add_argument(
+        "--drop-phase-start-seconds",
+        type=float,
+        default=0.0,
+        help=(
+            "Drop rows from the start of each experiment/phase group before labeling. "
+            "Use this to remove Prometheus range-vector carryover after phase switches."
+        ),
+    )
+    parser.add_argument(
+        "--trimmed-output",
+        default=None,
+        help="Optional CSV path for feature windows after phase-start trimming.",
+    )
     return parser.parse_args()
 
 
@@ -33,6 +47,18 @@ def label_restart(row: pd.Series, error_threshold: float, cpu_upper: float, p95_
     if error_rate >= error_threshold and cpu_sat < cpu_upper and p95 > p95_threshold:
         return "auto_restart"
     return "no_action"
+
+
+def drop_phase_starts(df: pd.DataFrame, seconds: float) -> pd.DataFrame:
+    if seconds <= 0:
+        return df.copy()
+    if "phase" not in df.columns:
+        raise ValueError("--drop-phase-start-seconds requires a phase column in the input CSV.")
+
+    group_columns = ["experiment_id", "phase"]
+    phase_start = df.groupby(group_columns)["window_end"].transform("min")
+    keep = df["window_end"] >= phase_start + seconds
+    return df.loc[keep].copy()
 
 
 def main() -> None:
@@ -54,6 +80,15 @@ def main() -> None:
     dataset = df.copy()
     if "experiment_id" not in dataset.columns:
         dataset["experiment_id"] = args.experiment_id or Path(args.input).stem
+
+    dataset = drop_phase_starts(dataset, args.drop_phase_start_seconds)
+
+    if args.trimmed_output:
+        trimmed_output = Path(args.trimmed_output)
+        trimmed_output.parent.mkdir(parents=True, exist_ok=True)
+        dataset.to_csv(trimmed_output, index=False)
+        print(f"Saved trimmed restart feature windows: {trimmed_output}")
+        print(f"Trimmed rows: {len(dataset)}")
 
     dataset["label"] = dataset.apply(
         lambda row: label_restart(row, args.error_threshold, args.cpu_upper, args.p95_threshold),
