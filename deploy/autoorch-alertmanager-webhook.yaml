@@ -1,4 +1,41 @@
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: autoorch-runner
+  namespace: default
+  labels:
+    app: autoorch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: autoorch-runner
+  namespace: default
+  labels:
+    app: autoorch
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    resourceNames: ["controllable-backend"]
+    verbs: ["get", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: autoorch-runner
+  namespace: default
+  labels:
+    app: autoorch
+subjects:
+  - kind: ServiceAccount
+    name: autoorch-runner
+    namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: autoorch-runner
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: autoorch-webhook
@@ -28,6 +65,7 @@ spec:
       labels:
         app: autoorch
     spec:
+      serviceAccountName: autoorch-runner
       containers:
         - name: webhook
           image: autoorch-webhook:latest
@@ -71,6 +109,8 @@ spec:
               value: "300"
             - name: MAX_REPLICAS
               value: "5"
+            - name: PLAYBOOK_DIR
+              value: "/app/playbooks"
             - name: ACTION_MODE
               value: "stub"
             - name: COLLECT_DIAGNOSTICS_ON_NOTIFY

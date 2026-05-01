@@ -2,7 +2,7 @@ fastapi
 uvicorn[standard]
 requests
 pydantic
-ansible
+ansible-core==2.19.9
 prometheus-client
 scikit-learn
 pandas
