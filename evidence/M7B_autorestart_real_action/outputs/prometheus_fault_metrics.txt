@@ -1,0 +1,26 @@
+# Prometheus Fault Metrics
+
+Clean M7B run values:
+
+```text
+http_5xx_rate = 19.396551724137932
+p95 = 0.9830508474576272
+cpu_sat = 0.24378081848011385
+```
+
+Raw query outputs:
+
+```json
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777668183.622,"19.396551724137932"]}]}}
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777668183.718,"0.9830508474576272"]}]}}
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777668183.837,"0.24378081848011385"]}]}}
+```
+
+Acceptance:
+
+```text
+http_5xx_rate >= 0.20: yes
+p95 > 0.50: yes
+cpu_sat < 0.70: yes
+```
+

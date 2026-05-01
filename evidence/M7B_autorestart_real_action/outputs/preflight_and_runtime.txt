@@ -1,0 +1,46 @@
+# Preflight And Runtime
+
+Initial deployment state:
+
+```text
+NAME                   READY   UP-TO-DATE   AVAILABLE
+autoorch-webhook       1/1     1            1
+controllable-backend   1/1     1            1
+loadgenerator          1/1     1            1
+```
+
+AutoOrch runtime before real execution:
+
+```text
+serviceAccountName: autoorch-runner
+ACTION_MODE: stub
+PLAYBOOK_DIR: /app/playbooks
+```
+
+RBAC:
+
+```text
+can get deployment/controllable-backend: yes
+can patch deployment/controllable-backend: yes
+can patch deployment/demo-backend: no
+```
+
+Ansible syntax check:
+
+```text
+playbook: /app/playbooks/restart_deployment.yml
+```
+
+Unit tests after runtime safeguard:
+
+```text
+Ran 16 tests in 0.043s
+OK
+```
+
+Health after switching to real mode:
+
+```json
+{"status":"ok","autoscale_model_ready":true,"restart_model_ready":true,"action_mode":"ansible","target":{"namespace":"default","workload":"controllable-backend"}}
+```
+

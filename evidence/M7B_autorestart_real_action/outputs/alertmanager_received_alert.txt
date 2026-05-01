@@ -1,0 +1,22 @@
+# Alertmanager Evidence
+
+Alertmanager received and routed `AutoOrchRestartFault` to the AutoOrch receiver:
+
+```text
+alertname: AutoOrchRestartFault
+receivers:
+  - default/autoorch-m7-autorestart-route/autoorch-webhook
+labels:
+  namespace: default
+  service: controllable-backend
+  deployment: controllable-backend
+  severity: warning
+```
+
+The AutoOrch audit log also recorded:
+
+```text
+receiver: default/autoorch-m7-autorestart-route/autoorch-webhook
+status: firing
+```
+

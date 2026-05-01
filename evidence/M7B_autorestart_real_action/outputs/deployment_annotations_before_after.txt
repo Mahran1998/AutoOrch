@@ -1,0 +1,18 @@
+# Deployment Annotation Evidence
+
+Before clean M7B rerun:
+
+```text
+generation: 4
+observedGeneration: 4
+annotations: {"kubectl.kubernetes.io/restartedAt":"2026-05-01T20:34:00Z","prometheus.io/path":"/metrics","prometheus.io/port":"5000","prometheus.io/scrape":"true"}
+```
+
+After clean M7B rerun:
+
+```text
+generation: 5
+observedGeneration: 5
+annotations: {"kubectl.kubernetes.io/restartedAt":"2026-05-01T20:43:38Z","prometheus.io/path":"/metrics","prometheus.io/port":"5000","prometheus.io/scrape":"true"}
+```
+

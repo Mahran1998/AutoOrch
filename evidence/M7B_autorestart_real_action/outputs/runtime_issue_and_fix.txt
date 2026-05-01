@@ -1,0 +1,23 @@
+# Runtime Issue Found During First Real Attempt
+
+The first M7B real attempt successfully executed the Ansible restart, but it was not accepted as the clean thesis run because the webhook's probe/timeout budget was too tight for a blocking real action.
+
+Observed issue:
+
+```text
+action_result.status=success
+action duration ~= 18s
+AutoOrch liveness probe failed during the action window
+Alertmanager/retry behavior contributed to a second backend rollout
+```
+
+Focused fix before clean rerun:
+
+```text
+AutoOrch readiness/liveness timeoutSeconds: 5
+AutoOrch readiness/liveness failureThreshold: 6
+M7B AlertmanagerConfig webhook timeout: 30s
+```
+
+The clean rerun then completed with a single recorded AutoOrch action and no AutoOrch liveness failure during the action window.
+

@@ -1,0 +1,25 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: autoorch-autorestart-fault
+  namespace: default
+spec:
+  groups:
+    - name: autoorch-m7-autorestart.rules
+      rules:
+        - alert: AutoOrchRestartFault
+          expr: |
+            (
+              sum(rate(http_requests_total{exported_endpoint="/api/test",status=~"5.."}[1m])) >= 0.20
+            )
+            and
+            (
+              histogram_quantile(0.95, sum(rate(http_request_latency_seconds_bucket[1m])) by (le)) > 0.50
+            )
+          for: 0s
+          labels:
+            severity: warning
+            namespace: default
+            service: controllable-backend
+            deployment: controllable-backend
+

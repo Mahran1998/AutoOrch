@@ -1,0 +1,7 @@
+# Pod Identity Before Clean M7B Restart
+
+```text
+NAME                                    UID                                    CREATED                PHASE     NODE
+controllable-backend-75d6db8655-snr69   80b27ff3-ccf7-43be-b678-2cd7557b2e72   2026-05-01T20:34:01Z   Running   autoorch-worker
+```
+

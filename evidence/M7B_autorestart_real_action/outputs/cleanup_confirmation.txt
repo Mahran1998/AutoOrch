@@ -1,0 +1,37 @@
+# Cleanup Confirmation
+
+Final health:
+
+```json
+{"status":"ok","autoscale_model_ready":true,"restart_model_ready":true,"action_mode":"stub","target":{"namespace":"default","workload":"controllable-backend"}}
+```
+
+Backend fault toggles:
+
+```text
+error_injection_enabled 0.0
+latency_injection_enabled 0.0
+```
+
+Loadgenerator deployment environment:
+
+```text
+RPS=0
+CONCURRENCY=1
+```
+
+Temporary rule:
+
+```text
+Error from server (NotFound): prometheusrules.monitoring.coreos.com "autoorch-autorestart-fault" not found
+```
+
+Final deployments:
+
+```text
+NAME                   READY   UP-TO-DATE   AVAILABLE
+autoorch-webhook       1/1     1            1
+controllable-backend   1/1     1            1
+loadgenerator          1/1     1            1
+```
+

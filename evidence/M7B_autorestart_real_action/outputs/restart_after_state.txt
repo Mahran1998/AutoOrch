@@ -1,0 +1,17 @@
+# Restart After State
+
+Rollout status:
+
+```text
+deployment "controllable-backend" successfully rolled out
+```
+
+Deployment state:
+
+```text
+NAME                   READY   UP-TO-DATE   AVAILABLE
+controllable-backend   1/1     1            1
+```
+
+Replicas remained `1/1`, confirming this was restart remediation, not autoscale remediation.
+
