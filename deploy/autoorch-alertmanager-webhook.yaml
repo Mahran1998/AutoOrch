@@ -121,12 +121,16 @@ spec:
               port: 8080
             initialDelaySeconds: 2
             periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 6
           livenessProbe:
             httpGet:
               path: /health
               port: 8080
             initialDelaySeconds: 10
             periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
