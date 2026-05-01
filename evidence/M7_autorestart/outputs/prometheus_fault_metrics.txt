@@ -1,0 +1,36 @@
+M7A passing attempt metrics.
+
+Parameters:
+- RPS=20
+- CONCURRENCY=15
+- LATENCY_MS=700
+- ACTION_MODE=stub
+
+Prometheus query values captured during the passing attempt:
+
+http_5xx_rate:
+  query: sum(rate(http_requests_total{exported_endpoint="/api/test",status=~"5.."}[1m]))
+  value: 20.44200149908011
+  criterion: >= 0.20
+  result: pass
+
+p95:
+  query: histogram_quantile(0.95, sum(rate(http_request_latency_seconds_bucket[1m])) by (le))
+  value: 0.9741379310344827
+  criterion: > 0.50
+  result: pass
+
+cpu_sat:
+  query: sum(rate(container_cpu_usage_seconds_total{namespace="default",pod=~"controllable-backend-.*",container!="POD"}[1m])) / 0.5
+  value: 0.22365451737008568
+  criterion: < 0.70
+  result: pass
+
+AutoOrch decision log feature vector:
+
+rps: 20.443394512084318
+p95: 0.9741379310344827
+http_5xx_rate: 20.443394512084318
+cpu_sat: 0.28859644060096723
+
+The small cpu_sat difference is expected because the Prometheus query was read separately from the feature query bundle used inside AutoOrch.

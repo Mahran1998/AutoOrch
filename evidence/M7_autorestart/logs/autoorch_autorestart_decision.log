@@ -1,0 +1,87 @@
+First attempt, RPS=30, did not meet runtime restart confidence:
+
+2026-04-26 23:44:17,840 INFO AUDIT {
+  "target": {
+    "namespace": "default",
+    "workload": "controllable-backend",
+    "alertname": "AutoOrchRestartFault",
+    "severity": "warning",
+    "status": "firing",
+    "receiver": "default/autoorch-m7-autorestart-route/autoorch-webhook"
+  },
+  "features": {
+    "rps": 22.876349483403196,
+    "p95": 0.9663781624500665,
+    "http_5xx_rate": 17.31627552058604,
+    "cpu_sat": 0.3481011721111097
+  },
+  "candidate_action": "no_action",
+  "final_action": "no_action",
+  "decision": "no_action",
+  "reason": "below_threshold",
+  "p_autoscale": 4.6888252489746675e-25,
+  "p_restart": 0.7866666666666666,
+  "action_result": {
+    "action": "no_action",
+    "status": "skipped"
+  },
+  "alerts_count": 1
+}
+INFO: 10.244.1.11:35418 - "POST /alert HTTP/1.1" 200 OK
+
+Passing attempt, RPS=20, met AutoRestart confidence:
+
+2026-04-26 23:52:10,546 INFO AUDIT {
+  "target": {
+    "namespace": "default",
+    "workload": "controllable-backend",
+    "alertname": "AutoOrchRestartFault",
+    "severity": "warning",
+    "status": "firing",
+    "receiver": "default/autoorch-m7-autorestart-route/autoorch-webhook"
+  },
+  "features": {
+    "rps": 20.443394512084318,
+    "p95": 0.9741379310344827,
+    "http_5xx_rate": 20.443394512084318,
+    "cpu_sat": 0.28859644060096723
+  },
+  "restart_context": {
+    "restart_evidence": 0.0,
+    "available_replicas": 1.0,
+    "unavailable_replicas": 0.0,
+    "desired_replicas": 1.0,
+    "missing_metrics": [],
+    "query_errors": [],
+    "degraded_availability": false,
+    "instability_present": false
+  },
+  "candidate_action": "auto_restart",
+  "final_action": "auto_restart",
+  "decision": "auto_restart",
+  "reason": "restart_confident",
+  "p_autoscale": 2.4050651419655286e-25,
+  "p_restart": 1.0,
+  "signals": {
+    "feature_order": ["rps", "p95", "http_5xx_rate", "cpu_sat"],
+    "missing_metrics": [],
+    "query_errors": [],
+    "alert_status": "firing",
+    "autoscale_model_ready": true,
+    "restart_model_ready": true
+  },
+  "action_result": {
+    "action": "auto_restart",
+    "status": "simulated",
+    "duration_seconds": 0.000187,
+    "details": {
+      "mode": "stub",
+      "target": {
+        "namespace": "default",
+        "workload": "controllable-backend"
+      }
+    }
+  },
+  "alerts_count": 1
+}
+INFO: 10.244.1.11:36218 - "POST /alert HTTP/1.1" 200 OK

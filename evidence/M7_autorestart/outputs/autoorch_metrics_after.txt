@@ -1,0 +1,25 @@
+AutoOrch /metrics after the passing M7A run.
+
+Health:
+
+{"status":"ok","autoscale_model_ready":true,"restart_model_ready":true,"action_mode":"stub","target":{"namespace":"default","workload":"controllable-backend"}}
+
+Relevant metrics:
+
+autoorch_alerts_received_total 11.0
+
+autoorch_decisions_total{decision="no_action"} 7.0
+autoorch_decisions_total{decision="notify_human"} 3.0
+autoorch_decisions_total{decision="auto_restart"} 1.0
+
+autoorch_actions_total{action="auto_restart",status="simulated"} 1.0
+
+autoorch_action_duration_seconds_count{action="auto_restart"} 1.0
+autoorch_action_duration_seconds_sum{action="auto_restart"} 0.000187
+
+autoorch_restart_model_predictions_total{result="below_threshold"} 7.0
+autoorch_restart_model_predictions_total{result="above_threshold"} 1.0
+
+Interpretation:
+
+AutoOrch made exactly one `auto_restart` decision during M7A, and the action was simulated because `ACTION_MODE=stub`.

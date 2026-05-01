@@ -1,0 +1,28 @@
+Alertmanager received the M7A alert and routed it to AutoOrch.
+
+Relevant Alertmanager API excerpt:
+
+alertname: AutoOrchRestartFault
+receivers:
+  - default/autoorch-m7-autorestart-route/autoorch-webhook
+status: active
+labels:
+  namespace: default
+  service: controllable-backend
+  deployment: controllable-backend
+  severity: warning
+  m7_test: "true"
+annotations:
+  summary: AutoOrch M7 AutoRestart decision test alert
+  description: Safe M7A alert for restart-like errors and latency. ACTION_MODE remains stub.
+
+Route:
+
+AlertmanagerConfig:
+  default/autoorch-m7-autorestart-route
+
+Webhook URL:
+  http://autoorch-webhook.default.svc.cluster.local:8080/alert
+
+Note:
+The temporary PrometheusRule was deleted during cleanup. The Alertmanager API may retain the alert until its resolved/endsAt interval expires.

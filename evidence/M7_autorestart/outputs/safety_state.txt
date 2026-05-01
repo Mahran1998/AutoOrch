@@ -1,0 +1,33 @@
+M7A final safety state after cleanup.
+
+AutoOrch health:
+
+{"status":"ok","autoscale_model_ready":true,"restart_model_ready":true,"action_mode":"stub","target":{"namespace":"default","workload":"controllable-backend"}}
+
+Deployments:
+
+NAME                   READY   UP-TO-DATE   AVAILABLE
+autoorch-webhook       1/1     1            1
+controllable-backend   1/1     1            1
+loadgenerator          1/1     1            1
+
+Loadgenerator environment after cleanup:
+
+TARGET=http://controllable-backend:5000/api/test
+RPS=0
+CONCURRENCY=1
+
+Fault toggles after cleanup:
+
+error_injection_enabled 0.0
+latency_injection_enabled 0.0
+
+Temporary alert rule after cleanup:
+
+No `autoorch-autorestart-fault` PrometheusRule exists in the default namespace.
+
+Pod state note:
+
+`controllable-backend` remained one replica throughout M7A. No real restart or scale action was executed.
+
+There is an unrelated `test` pod in `ImagePullBackOff` from earlier work. It is not part of AutoOrch and should be cleaned before thesis screenshots.
