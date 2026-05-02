@@ -18,6 +18,10 @@ rules:
     resources: ["deployments"]
     resourceNames: ["controllable-backend"]
     verbs: ["get", "patch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments/scale"]
+    resourceNames: ["controllable-backend"]
+    verbs: ["get", "patch", "update"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
