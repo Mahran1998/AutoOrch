@@ -1,0 +1,20 @@
+# M8A AutoOrch Metrics After Decision
+
+Relevant AutoOrch metrics after M8A:
+
+```text
+autoorch_alerts_received_total 1.0
+autoorch_decisions_total{decision="auto_scale"} 1.0
+autoorch_notify_human_total 0.0
+autoorch_actions_total{action="auto_scale",status="simulated"} 1.0
+```
+
+Action duration:
+
+```text
+autoorch_action_duration_seconds_count{action="auto_scale"} 1.0
+autoorch_action_duration_seconds_sum{action="auto_scale"} 5e-06
+```
+
+No action failure was recorded.
+

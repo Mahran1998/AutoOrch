@@ -1,0 +1,27 @@
+# M8A Replica Before/After Evidence
+
+## Before M8A
+
+```text
+NAME                   READY   REPLICAS   AVAILABLE
+controllable-backend   1       1          1
+```
+
+Pod identity:
+
+```text
+NAME                                   UID                                    CREATED                PHASE     NODE
+controllable-backend-cf9f896c8-w2bbs   dedf5ab0-f8a7-45c9-b41d-ad83421ccd93   2026-05-01T20:43:38Z   Running   autoorch-worker
+```
+
+## After M8A
+
+```text
+NAME                   READY   REPLICAS   AVAILABLE
+controllable-backend   1       1          1
+```
+
+## Interpretation
+
+Replicas stayed at `1`. This is expected because M8A ran with `ACTION_MODE=stub`.
+

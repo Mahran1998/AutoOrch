@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: autoorch-m8-autoscale-route
+  namespace: default
+spec:
+  route:
+    receiver: autoorch-webhook
+    matchers:
+      - name: alertname
+        matchType: =
+        value: AutoOrchScalePressure
+      - name: service
+        matchType: =
+        value: controllable-backend
+      - name: deployment
+        matchType: =
+        value: controllable-backend
+  receivers:
+    - name: autoorch-webhook
+      webhookConfigs:
+        - url: http://autoorch-webhook.default.svc.cluster.local:8080/alert
+          sendResolved: true
+          maxAlerts: 1
+          timeout: 30s
+

@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: autoorch-autoscale-pressure
+  namespace: default
+spec:
+  groups:
+    - name: autoorch-m8-autoscale.rules
+      rules:
+        - alert: AutoOrchScalePressure
+          expr: |
+            (
+              sum(rate(container_cpu_usage_seconds_total{namespace="default",pod=~"controllable-backend-.*",container!="POD"}[1m])) / 0.5 >= 0.70
+            )
+            and
+            (
+              sum(rate(http_requests_total{exported_endpoint="/api/test"}[1m])) >= 100
+            )
+            and
+            (
+              (sum(rate(http_requests_total{exported_endpoint="/api/test",status=~"5.."}[1m])) or vector(0)) < 0.20
+            )
+

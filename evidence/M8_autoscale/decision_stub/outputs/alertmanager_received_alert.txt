@@ -1,0 +1,35 @@
+# M8A Alertmanager Evidence
+
+Alertmanager received `AutoOrchScalePressure` and routed it to the M8 AutoOrch receiver:
+
+```json
+{
+  "annotations": {
+    "description": "Safe M8A alert for CPU-bound load with low 5xx. ACTION_MODE remains stub.",
+    "summary": "AutoOrch M8 AutoScale decision test alert"
+  },
+  "receivers": [
+    {
+      "name": "default/autoorch-m8-autoscale-route/autoorch-webhook"
+    }
+  ],
+  "status": {
+    "state": "active"
+  },
+  "labels": {
+    "alertname": "AutoOrchScalePressure",
+    "deployment": "controllable-backend",
+    "m8_test": "true",
+    "namespace": "default",
+    "service": "controllable-backend",
+    "severity": "warning"
+  }
+}
+```
+
+The full Alertmanager API output also contained unrelated platform alerts (`Watchdog`, `TargetDown`, etc.). The relevant M8A alert was correctly routed to:
+
+```text
+default/autoorch-m8-autoscale-route/autoorch-webhook
+```
+

@@ -1,0 +1,50 @@
+# M8A Prometheus Metrics
+
+## AutoOrch Decision Feature Vector
+
+These are the exact values logged by AutoOrch in the decision audit:
+
+```text
+rps=190.46596521365683
+p95=0.000950214253495715
+http_5xx_rate=0.0
+cpu_sat=1.7157971006035118
+p_autoscale=0.9203574706967853
+```
+
+## Independent Prometheus Sample After Decision
+
+### RPS
+
+```json
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777728837.422,"184.85915492957744"]}]}}
+```
+
+### p95
+
+```json
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777728837.460,"0.00095"]}]}}
+```
+
+### 5xx Rate
+
+```json
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777728837.505,"0"]}]}}
+```
+
+### CPU Saturation
+
+```json
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777728837.529,"1.6571915705565101"]}]}}
+```
+
+### Alert State
+
+```json
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"ALERTS","alertname":"AutoOrchScalePressure","alertstate":"firing","deployment":"controllable-backend","m8_test":"true","namespace":"default","service":"controllable-backend","severity":"warning"},"value":[1777728837.566,"1"]}]}}
+```
+
+## Interpretation
+
+The independent sample was captured after the AutoOrch decision. The later offline probability from this sample was `0.8976990646880287`, slightly below the threshold due to normal load fluctuation. The accepted decision evidence is the AutoOrch audit line, which shows the live decision vector and `p_autoscale=0.9203574706967853`.
+

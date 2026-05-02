@@ -1,0 +1,90 @@
+# M8A Preflight and Runtime State
+
+## Git Status Before Run
+
+```text
+?? .codex
+?? "Marhran_0302REV_CORR_UPDATED_v2_FINAL CORR (AutoRecovered).docx"
+?? deploy/deployment_webhook.yaml
+?? docs/
+?? grafana/
+?? scripts/run_exp3_autoscale_validation.sh
+?? scripts/run_experiment_extreme_load.sh
+?? scripts/run_experiment_with_flask_backend.sh
+?? tools/controllable-backend/deployment.yaml
+?? webhook/notify.py
+```
+
+Only unrelated untracked files were present.
+
+## Initial Deployment State
+
+```text
+NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
+controllable-backend   1/1     1            1           9d
+autoorch-webhook       0/1     1            0           177d
+loadgenerator          1/1     1            1           176d
+```
+
+AutoOrch was not healthy at first, so M8A was paused before applying any alert or load.
+
+## AutoOrch Recovery
+
+AutoOrch was rollout-restarted while keeping `ACTION_MODE=stub`.
+
+```text
+deployment.apps/autoorch-webhook restarted
+```
+
+The rollout status command timed out narrowly, but the deployment became healthy shortly after:
+
+```text
+NAME                                READY   STATUS    RESTARTS   AGE   IP            NODE
+autoorch-webhook-85d487596c-fcnwq   1/1     Running   0          35s   10.244.1.11   autoorch-worker
+```
+
+Deployment status:
+
+```text
+Replicas: 1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+ACTION_MODE: stub
+```
+
+AutoOrch logs confirmed both models loaded:
+
+```text
+Loaded autoscale model: /app/webhook/models/autoscale_classifier.joblib
+Autoscale features=['rps', 'p95', 'http_5xx_rate', 'cpu_sat'] threshold=0.90
+Loaded restart model: /app/webhook/models/restart_classifier.joblib
+Restart features=['rps', 'p95', 'http_5xx_rate', 'cpu_sat'] threshold=0.90
+```
+
+## Replicas Before M8A
+
+```text
+NAME                   READY   REPLICAS   AVAILABLE
+controllable-backend   1       1          1
+```
+
+Pod identity before M8A:
+
+```text
+NAME                                   UID                                    CREATED                PHASE     NODE
+controllable-backend-cf9f896c8-w2bbs   dedf5ab0-f8a7-45c9-b41d-ad83421ccd93   2026-05-01T20:43:38Z   Running   autoorch-worker
+```
+
+## Health Checks Before M8A
+
+AutoOrch:
+
+```json
+{"status":"ok","autoscale_model_ready":true,"restart_model_ready":true,"action_mode":"stub","target":{"namespace":"default","workload":"controllable-backend"}}
+```
+
+Fault toggles:
+
+```text
+error_injection_enabled 0.0
+latency_injection_enabled 0.0
+```
+

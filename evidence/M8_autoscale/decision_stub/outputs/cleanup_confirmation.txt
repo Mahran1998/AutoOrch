@@ -1,0 +1,50 @@
+# M8A Cleanup Confirmation
+
+## Fault Injection State
+
+```text
+error_injection_enabled 0.0
+latency_injection_enabled 0.0
+```
+
+## AutoOrch Health
+
+```json
+{"status":"ok","autoscale_model_ready":true,"restart_model_ready":true,"action_mode":"stub","target":{"namespace":"default","workload":"controllable-backend"}}
+```
+
+## Deployment State
+
+```text
+NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
+controllable-backend   1/1     1            1           9d
+autoorch-webhook       1/1     1            1           177d
+loadgenerator          1/1     1            1           176d
+```
+
+## Loadgenerator Reset
+
+```json
+[{"name":"TARGET","value":"http://controllable-backend:5000/api/test"},{"name":"METRICS_PORT","value":"8080"},{"name":"RPS","value":"0"},{"name":"CONCURRENCY","value":"1"}]
+```
+
+## Temporary PrometheusRule
+
+```text
+No resources found in default namespace.
+```
+
+## AlertmanagerConfig State
+
+M8A route deleted. Older M6/M7 evidence routes remain:
+
+```text
+NAME                            AGE
+autoorch-m6-test-route          5d18h
+autoorch-m7-autorestart-route   5d14h
+```
+
+## Port-Forward State
+
+No M8A port-forwards remained. The only `pgrep` match was the `pgrep` command itself.
+
