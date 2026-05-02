@@ -1,0 +1,36 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: autoorch-autoscale-pressure
+  namespace: default
+  labels:
+    release: prometheus-stack
+    purpose: autoorch-m8
+spec:
+  groups:
+    - name: autoorch-m8-autoscale.rules
+      rules:
+        - alert: AutoOrchScalePressure
+          expr: |
+            (
+              sum(rate(container_cpu_usage_seconds_total{namespace="default",pod=~"controllable-backend-.*",container!="POD"}[1m])) / 0.5 >= 0.70
+            )
+            and
+            (
+              sum(rate(http_requests_total{exported_endpoint="/api/test"}[1m])) >= 100
+            )
+            and
+            (
+              (sum(rate(http_requests_total{exported_endpoint="/api/test",status=~"5.."}[1m])) or vector(0)) < 0.20
+            )
+          for: 0s
+          labels:
+            severity: warning
+            namespace: default
+            service: controllable-backend
+            deployment: controllable-backend
+            m8_test: "true"
+          annotations:
+            summary: AutoOrch M8 AutoScale decision test alert
+            description: Safe M8A alert for CPU-bound load with low 5xx. ACTION_MODE remains stub.
+
