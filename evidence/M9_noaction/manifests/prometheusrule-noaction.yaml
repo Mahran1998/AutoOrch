@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: autoorch-noaction-benign
+  namespace: default
+  labels:
+    release: prometheus-stack
+    purpose: autoorch-m9
+spec:
+  groups:
+    - name: autoorch-m9-noaction.rules
+      rules:
+        - alert: AutoOrchNoActionBenign
+          expr: vector(1)
+          for: 0s
+          labels:
+            severity: info
+            namespace: default
+            service: controllable-backend
+            deployment: controllable-backend
+            m9_test: "true"
+          annotations:
+            summary: AutoOrch M9 benign/noisy alert
+            description: Temporary M9 alert used to prove AutoOrch chooses no_action when live backend metrics are healthy.
