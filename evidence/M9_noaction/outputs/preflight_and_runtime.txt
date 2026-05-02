@@ -1,0 +1,65 @@
+M9 preflight baseline
+=====================
+
+$ kubectl get deploy -n default controllable-backend autoorch-webhook loadgenerator
+NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
+controllable-backend   1/1     1            1           9d
+autoorch-webhook       1/1     1            1           177d
+loadgenerator          1/1     1            1           176d
+
+$ kubectl get deploy -n default autoorch-webhook -o jsonpath='{ACTION_MODE}'
+stub
+
+$ kubectl get deployment controllable-backend -n default -o jsonpath='{.spec.replicas}{"\n"}{.status.readyReplicas}{"\n"}{.status.availableReplicas}{"\n"}'
+1
+1
+1
+
+$ kubectl get prometheusrule -n default
+No resources found in default namespace.
+
+$ kubectl get alertmanagerconfig -n default
+NAME                            AGE
+autoorch-m6-test-route          5d23h
+autoorch-m7-autorestart-route   5d19h
+
+Health and fault state
+======================
+
+$ curl -s http://127.0.0.1:5000/health
+{"service":"controllable-backend","status":"ok"}
+
+$ curl -s http://127.0.0.1:5000/metrics | grep -E "error_injection_enabled|latency_injection_enabled"
+error_injection_enabled 0.0
+latency_injection_enabled 0.0
+
+$ curl -s http://127.0.0.1:18080/health
+{"status":"ok","autoscale_model_ready":true,"restart_model_ready":true,"action_mode":"stub","target":{"namespace":"default","workload":"controllable-backend"}}
+
+AutoOrch baseline metrics
+=========================
+
+Before M9, the latest AutoOrch rollout had zeroed the relevant runtime counters:
+
+```text
+autoorch_alerts_received_total 0.0
+autoorch_notify_human_total 0.0
+```
+
+Low healthy load
+================
+
+$ kubectl set env deployment/loadgenerator TARGET=http://controllable-backend:5000/api/test RPS=10 CONCURRENCY=5 --overwrite -n default
+deployment.apps/loadgenerator env updated
+
+$ kubectl rollout status deployment/loadgenerator -n default --timeout=90s
+deployment "loadgenerator" successfully rolled out
+
+Temporary route and rule
+========================
+
+$ kubectl apply -f evidence/M9_noaction/manifests/alertmanagerconfig-noaction.yaml
+alertmanagerconfig.monitoring.coreos.com/autoorch-m9-noaction-route created
+
+$ kubectl apply -f evidence/M9_noaction/manifests/prometheusrule-noaction.yaml
+prometheusrule.monitoring.coreos.com/autoorch-noaction-benign created

@@ -1,0 +1,18 @@
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: autoorch-noaction-benign
+  namespace: default
+spec:
+  groups:
+    - name: autoorch-m9-noaction.rules
+      rules:
+        - alert: AutoOrchNoActionBenign
+          expr: vector(1)
+          labels:
+            severity: info
+            namespace: default
+            service: controllable-backend
+            deployment: controllable-backend
+```

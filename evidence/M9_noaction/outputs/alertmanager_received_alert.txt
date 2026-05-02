@@ -1,0 +1,37 @@
+M9 Alertmanager evidence
+========================
+
+The Alertmanager API showed `AutoOrchNoActionBenign` with the configured AutoOrch receiver:
+
+```json
+{
+  "annotations": {
+    "description": "Temporary M9 alert used to prove AutoOrch chooses no_action when live backend metrics are healthy.",
+    "summary": "AutoOrch M9 benign/noisy alert"
+  },
+  "receivers": [
+    {
+      "name": "default/autoorch-m9-noaction-route/autoorch-webhook"
+    }
+  ],
+  "startsAt": "2026-05-02T18:56:01.324Z",
+  "status": {
+    "inhibitedBy": ["7748f9f19a544368"],
+    "state": "suppressed"
+  },
+  "labels": {
+    "alertname": "AutoOrchNoActionBenign",
+    "deployment": "controllable-backend",
+    "m9_test": "true",
+    "namespace": "default",
+    "service": "controllable-backend",
+    "severity": "info"
+  }
+}
+```
+
+The alert was marked suppressed by kube-prometheus-stack's built-in `InfoInhibitor` because it used `severity=info`. AutoOrch logs still prove that a POST reached `/alert`:
+
+```text
+INFO:     10.244.1.9:33568 - "POST /alert HTTP/1.1" 200 OK
+```

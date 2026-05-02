@@ -1,0 +1,23 @@
+M9 Prometheus values
+====================
+
+Healthy feature precheck before benign alert:
+
+$ curl -sG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=sum(rate(http_requests_total{exported_endpoint="/api/test"}[1m]))'
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777748135.021,"9.585277014505719"]}]}}
+
+$ curl -sG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=histogram_quantile(0.95, sum(rate(http_request_latency_seconds_bucket[1m])) by (le))'
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777748135.081,"0.0009499999999999999"]}]}}
+
+$ curl -sG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=(sum(rate(http_requests_total{exported_endpoint="/api/test",status=~"5.."}[1m])) or vector(0))'
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777748135.129,"0"]}]}}
+
+$ curl -sG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=sum(rate(container_cpu_usage_seconds_total{namespace="default",pod=~"controllable-backend-.*",container!="POD"}[1m])) / 0.5'
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777748135.177,"0.09920773072127839"]}]}}
+
+Prometheus alert state:
+
+$ curl -sG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=ALERTS{alertname="AutoOrchNoActionBenign"}'
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"ALERTS","alertname":"AutoOrchNoActionBenign","alertstate":"firing","deployment":"controllable-backend","m9_test":"true","namespace":"default","service":"controllable-backend","severity":"info"},"value":[1777748211.306,"1"]}]}}
+
+The decisive feature vector used by AutoOrch is preserved in logs/autoorch_noaction.log.

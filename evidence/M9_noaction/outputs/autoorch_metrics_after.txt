@@ -1,0 +1,22 @@
+M9 AutoOrch metrics after NoAction
+==================================
+
+```text
+# HELP autoorch_alerts_received_total Total alerts received by AutoOrch
+# TYPE autoorch_alerts_received_total counter
+autoorch_alerts_received_total 1.0
+
+# HELP autoorch_decisions_total Total decisions made by AutoOrch
+# TYPE autoorch_decisions_total counter
+autoorch_decisions_total{decision="no_action"} 1.0
+
+# HELP autoorch_notify_human_total Number of notify_human decisions
+# TYPE autoorch_notify_human_total counter
+autoorch_notify_human_total 0.0
+
+# HELP autoorch_restart_model_predictions_total Restart model probability evaluations
+# TYPE autoorch_restart_model_predictions_total counter
+autoorch_restart_model_predictions_total{result="below_threshold"} 1.0
+```
+
+No `autoorch_actions_total` entry was emitted for `no_action`, because the action executor correctly skipped remediation.

@@ -1,0 +1,29 @@
+M9 replica evidence
+===================
+
+Before:
+
+```text
+$ kubectl get deployment controllable-backend -n default -o jsonpath='{.spec.replicas}{"\n"}{.status.readyReplicas}{"\n"}{.status.availableReplicas}{"\n"}'
+1
+1
+1
+```
+
+After NoAction decision:
+
+```text
+$ kubectl get deployment controllable-backend -n default -o jsonpath='{.spec.replicas}{"\n"}{.status.readyReplicas}{"\n"}{.status.availableReplicas}{"\n"}'
+1
+1
+1
+```
+
+Final cleanup confirmation:
+
+```text
+$ kubectl get deployment controllable-backend -n default -o jsonpath='{.spec.replicas}{"\n"}{.status.readyReplicas}{"\n"}{.status.availableReplicas}{"\n"}'
+1
+1
+1
+```
