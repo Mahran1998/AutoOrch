@@ -1,0 +1,65 @@
+M8B cleanup confirmation
+========================
+
+Cleanup commands:
+
+```text
+$ kubectl set env deployment/loadgenerator TARGET=http://controllable-backend:5000/api/test RPS=0 CONCURRENCY=1 --overwrite -n default
+deployment.apps/loadgenerator env updated
+
+$ kubectl scale deployment/controllable-backend -n default --replicas=1
+deployment.apps/controllable-backend scaled
+
+$ kubectl set env deployment/autoorch-webhook ACTION_MODE=stub --overwrite -n default
+deployment.apps/autoorch-webhook env updated
+
+$ kubectl delete alertmanagerconfig -n default autoorch-m8-autoscale-route --ignore-not-found
+alertmanagerconfig.monitoring.coreos.com "autoorch-m8-autoscale-route" deleted from default namespace
+
+$ kubectl delete prometheusrule -n default autoorch-autoscale-pressure --ignore-not-found
+```
+
+Rollout cleanup:
+
+```text
+$ kubectl rollout status deployment/controllable-backend -n default --timeout=90s
+deployment "controllable-backend" successfully rolled out
+
+$ kubectl rollout status deployment/loadgenerator -n default --timeout=90s
+deployment "loadgenerator" successfully rolled out
+
+$ kubectl rollout status deployment/autoorch-webhook -n default --timeout=90s
+deployment "autoorch-webhook" successfully rolled out
+```
+
+Final state:
+
+```text
+$ kubectl get deploy -n default controllable-backend autoorch-webhook loadgenerator
+NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
+controllable-backend   1/1     1            1           9d
+autoorch-webhook       1/1     1            1           177d
+loadgenerator          1/1     1            1           176d
+
+$ kubectl get prometheusrule -n default
+No resources found in default namespace.
+
+$ kubectl get alertmanagerconfig -n default
+NAME                            AGE
+autoorch-m6-test-route          5d19h
+autoorch-m7-autorestart-route   5d14h
+
+$ kubectl get deploy -n default loadgenerator -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="RPS")].value}{"\n"}{.spec.template.spec.containers[0].env[?(@.name=="CONCURRENCY")].value}{"\n"}{.spec.template.spec.containers[0].env[?(@.name=="TARGET")].value}{"\n"}'
+0
+1
+http://controllable-backend:5000/api/test
+
+$ curl -s http://127.0.0.1:18080/health
+{"status":"ok","autoscale_model_ready":true,"restart_model_ready":true,"action_mode":"stub","target":{"namespace":"default","workload":"controllable-backend"}}
+
+$ curl -s http://127.0.0.1:5000/metrics | grep -E "error_injection_enabled|latency_injection_enabled"
+error_injection_enabled 0.0
+latency_injection_enabled 0.0
+```
+
+Note: the first local `kubectl scale` cleanup attempt hit the local sandbox. It was rerun outside the sandbox and completed successfully.

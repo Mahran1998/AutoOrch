@@ -1,0 +1,6 @@
+```yaml
+- apiGroups: ["apps"]
+  resources: ["deployments/scale"]
+  resourceNames: ["controllable-backend"]
+  verbs: ["get", "patch", "update"]
+```

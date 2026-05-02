@@ -1,0 +1,34 @@
+M8B Prometheus values
+=====================
+
+Mid-run values before AutoOrch action completed:
+
+$ curl -sG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=sum(rate(http_requests_total{exported_endpoint="/api/test"}[1m]))'
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777731352.076,"179.95999499937494"]}]}}
+
+$ curl -sG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=(sum(rate(http_requests_total{exported_endpoint="/api/test",status=~"5.."}[1m])) or vector(0))'
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777731385.441,"0"]}]}}
+
+$ curl -sG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=sum(rate(container_cpu_usage_seconds_total{namespace="default",pod=~"controllable-backend-.*",container!="POD"}[1m])) / 0.5'
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777731352.091,"1.6603552067620129"]}]}}
+
+Alert state:
+
+$ curl -sG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=ALERTS{alertname="AutoOrchScalePressure"}'
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"ALERTS","alertname":"AutoOrchScalePressure","alertstate":"firing","deployment":"controllable-backend","m8_test":"true","namespace":"default","service":"controllable-backend","severity":"warning"},"value":[1777731409.812,"1"]}]}}
+
+Values captured after action and before cleanup:
+
+$ curl -sG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=sum(rate(http_requests_total{exported_endpoint="/api/test"}[1m]))'
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777731466.450,"224.85350618187084"]}]}}
+
+$ curl -sG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=histogram_quantile(0.95, sum(rate(http_request_latency_seconds_bucket[1m])) by (le))'
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777731466.476,"0.0009508912864658746"]}]}}
+
+$ curl -sG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=(sum(rate(http_requests_total{exported_endpoint="/api/test",status=~"5.."}[1m])) or vector(0))'
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777731466.717,"0"]}]}}
+
+$ curl -sG http://127.0.0.1:9090/api/v1/query --data-urlencode 'query=sum(rate(container_cpu_usage_seconds_total{namespace="default",pod=~"controllable-backend-.*",container!="POD"}[1m])) / 0.5'
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777731466.914,"2.5591385063293655"]}]}}
+
+The decisive AutoOrch feature vector is preserved in logs/autoorch_autoscale_real_action.log.

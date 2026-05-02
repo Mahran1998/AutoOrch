@@ -1,0 +1,32 @@
+M8B Alertmanager evidence
+=========================
+
+The Alertmanager API showed `AutoOrchScalePressure` routed to the AutoOrch receiver:
+
+```json
+{
+  "annotations": {
+    "description": "M8B alert for CPU-bound load with low 5xx. ACTION_MODE is ansible only during the execution window.",
+    "summary": "AutoOrch M8B AutoScale real action alert"
+  },
+  "receivers": [
+    {
+      "name": "default/autoorch-m8-autoscale-route/autoorch-webhook"
+    }
+  ],
+  "startsAt": "2026-05-02T14:15:38.754Z",
+  "status": {
+    "state": "active"
+  },
+  "labels": {
+    "alertname": "AutoOrchScalePressure",
+    "deployment": "controllable-backend",
+    "m8_test": "true",
+    "namespace": "default",
+    "service": "controllable-backend",
+    "severity": "warning"
+  }
+}
+```
+
+Other built-in kube-prometheus-stack alerts were also present and routed to `null`; they were unrelated to M8B.

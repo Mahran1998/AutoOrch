@@ -1,0 +1,73 @@
+M8B preflight baseline
+======================
+
+$ kubectl get deploy -n default controllable-backend autoorch-webhook loadgenerator
+NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
+controllable-backend   1/1     1            1           9d
+autoorch-webhook       1/1     1            1           177d
+loadgenerator          1/1     1            1           176d
+
+$ kubectl get deployment controllable-backend -n default -o jsonpath='{.spec.replicas}{"\n"}{.status.readyReplicas}{"\n"}{.status.availableReplicas}{"\n"}'
+1
+1
+1
+
+$ kubectl get pods -n default -l app=controllable-backend -o custom-columns=NAME:.metadata.name,UID:.metadata.uid,CREATED:.metadata.creationTimestamp,PHASE:.status.phase,NODE:.spec.nodeName
+NAME                                   UID                                    CREATED                PHASE     NODE
+controllable-backend-cf9f896c8-w2bbs   dedf5ab0-f8a7-45c9-b41d-ad83421ccd93   2026-05-01T20:43:38Z   Running   autoorch-worker
+
+$ kubectl get deploy -n default autoorch-webhook -o jsonpath='{ACTION_MODE,MAX_REPLICAS,PLAYBOOK_DIR}'
+stub
+5
+/app/playbooks
+
+$ kubectl get prometheusrule -n default
+No resources found in default namespace.
+
+$ kubectl get alertmanagerconfig -n default
+NAME                            AGE
+autoorch-m6-test-route          5d19h
+autoorch-m7-autorestart-route   5d14h
+
+Health and fault state before run
+=================================
+
+$ curl -s http://127.0.0.1:5000/health
+{"service":"controllable-backend","status":"ok"}
+
+$ curl -s http://127.0.0.1:5000/metrics | grep -E "error_injection_enabled|latency_injection_enabled"
+error_injection_enabled 0.0
+latency_injection_enabled 0.0
+
+$ curl -s http://127.0.0.1:18080/health
+{"status":"ok","autoscale_model_ready":true,"restart_model_ready":true,"action_mode":"stub","target":{"namespace":"default","workload":"controllable-backend"}}
+
+Switch to real action mode
+==========================
+
+$ kubectl set env deployment/autoorch-webhook ACTION_MODE=ansible --overwrite -n default
+deployment.apps/autoorch-webhook env updated
+
+$ kubectl rollout status deployment/autoorch-webhook -n default --timeout=90s
+deployment "autoorch-webhook" successfully rolled out
+
+$ curl -s http://127.0.0.1:18080/health
+{"status":"ok","autoscale_model_ready":true,"restart_model_ready":true,"action_mode":"ansible","target":{"namespace":"default","workload":"controllable-backend"}}
+
+Temporary route and rule
+========================
+
+$ kubectl apply -f evidence/M8B_autoscale_real_action/manifests/alertmanagerconfig-autoscale.yaml
+alertmanagerconfig.monitoring.coreos.com/autoorch-m8-autoscale-route created
+
+$ kubectl apply -f evidence/M8B_autoscale_real_action/manifests/prometheusrule-autoscale.yaml
+prometheusrule.monitoring.coreos.com/autoorch-autoscale-pressure created
+
+Load start
+==========
+
+$ kubectl set env deployment/loadgenerator TARGET=http://controllable-backend:5000/api/test RPS=500 CONCURRENCY=75 --overwrite -n default
+deployment.apps/loadgenerator env updated
+
+$ kubectl rollout status deployment/loadgenerator -n default --timeout=90s
+deployment "loadgenerator" successfully rolled out

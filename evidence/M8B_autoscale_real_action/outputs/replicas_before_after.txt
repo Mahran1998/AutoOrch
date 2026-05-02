@@ -1,0 +1,46 @@
+M8B replica and pod identity evidence
+=====================================
+
+Before action:
+
+```text
+$ kubectl get deployment controllable-backend -n default -o jsonpath='{.spec.replicas}{"\n"}{.status.readyReplicas}{"\n"}{.status.availableReplicas}{"\n"}'
+1
+1
+1
+
+$ kubectl get pods -n default -l app=controllable-backend -o custom-columns=NAME:.metadata.name,UID:.metadata.uid,CREATED:.metadata.creationTimestamp,PHASE:.status.phase,NODE:.spec.nodeName
+NAME                                   UID                                    CREATED                PHASE     NODE
+controllable-backend-cf9f896c8-w2bbs   dedf5ab0-f8a7-45c9-b41d-ad83421ccd93   2026-05-01T20:43:38Z   Running   autoorch-worker
+```
+
+After AutoOrch real scale action:
+
+```text
+$ kubectl get deployment controllable-backend -n default -o jsonpath='{.spec.replicas}{"\n"}{.status.readyReplicas}{"\n"}{.status.availableReplicas}{"\n"}'
+2
+2
+2
+
+$ kubectl get deploy -n default controllable-backend -o custom-columns=NAME:.metadata.name,READY:.status.readyReplicas,REPLICAS:.spec.replicas,AVAILABLE:.status.availableReplicas
+NAME                   READY   REPLICAS   AVAILABLE
+controllable-backend   2       2          2
+
+$ kubectl get pods -n default -l app=controllable-backend -o custom-columns=NAME:.metadata.name,UID:.metadata.uid,CREATED:.metadata.creationTimestamp,PHASE:.status.phase,NODE:.spec.nodeName
+NAME                                   UID                                    CREATED                PHASE     NODE
+controllable-backend-cf9f896c8-rgx22   f5a01fe1-6be1-451c-bc1a-045aae9efa34   2026-05-02T14:15:57Z   Running   autoorch-worker
+controllable-backend-cf9f896c8-w2bbs   dedf5ab0-f8a7-45c9-b41d-ad83421ccd93   2026-05-01T20:43:38Z   Running   autoorch-worker
+```
+
+After cleanup:
+
+```text
+$ kubectl get deployment controllable-backend -n default -o jsonpath='{.spec.replicas}{"\n"}{.status.readyReplicas}{"\n"}{.status.availableReplicas}{"\n"}'
+1
+1
+1
+
+$ kubectl get pods -n default -l app=controllable-backend -o custom-columns=NAME:.metadata.name,UID:.metadata.uid,CREATED:.metadata.creationTimestamp,PHASE:.status.phase,NODE:.spec.nodeName
+NAME                                   UID                                    CREATED                PHASE     NODE
+controllable-backend-cf9f896c8-w2bbs   dedf5ab0-f8a7-45c9-b41d-ad83421ccd93   2026-05-01T20:43:38Z   Running   autoorch-worker
+```

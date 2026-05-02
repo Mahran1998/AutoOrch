@@ -1,0 +1,22 @@
+```yaml
+---
+- name: Scale a deployment for AutoOrch
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    namespace: "{{ namespace | default('default') }}"
+    workload: "{{ workload | default('demo-backend') }}"
+    desired_replicas: "{{ desired_replicas | default(2) }}"
+  tasks:
+    - name: Scale deployment via kubectl
+      ansible.builtin.command:
+        argv:
+          - kubectl
+          - scale
+          - "deployment/{{ workload }}"
+          - -n
+          - "{{ namespace }}"
+          - "--replicas={{ desired_replicas }}"
+      changed_when: true
+```

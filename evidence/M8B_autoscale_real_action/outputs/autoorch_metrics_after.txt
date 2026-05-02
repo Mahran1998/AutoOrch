@@ -1,0 +1,27 @@
+M8B AutoOrch metrics after real action
+======================================
+
+Captured before resetting AutoOrch back to `ACTION_MODE=stub`.
+
+```text
+# HELP autoorch_alerts_received_total Total alerts received by AutoOrch
+# TYPE autoorch_alerts_received_total counter
+autoorch_alerts_received_total 1.0
+
+# HELP autoorch_decisions_total Total decisions made by AutoOrch
+# TYPE autoorch_decisions_total counter
+autoorch_decisions_total{decision="auto_scale"} 1.0
+
+# HELP autoorch_notify_human_total Number of notify_human decisions
+# TYPE autoorch_notify_human_total counter
+autoorch_notify_human_total 0.0
+
+# HELP autoorch_actions_total Total actions attempted by AutoOrch
+# TYPE autoorch_actions_total counter
+autoorch_actions_total{action="auto_scale",status="success"} 1.0
+
+# HELP autoorch_action_duration_seconds Action execution time
+# TYPE autoorch_action_duration_seconds histogram
+autoorch_action_duration_seconds_count{action="auto_scale"} 1.0
+autoorch_action_duration_seconds_sum{action="auto_scale"} 16.278691
+```
