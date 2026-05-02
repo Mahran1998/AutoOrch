@@ -1,0 +1,81 @@
+# M8-Calibrate Raw Prometheus Query Capture
+
+These raw responses were captured during the successful Trial 3 load point:
+
+- target RPS: 500
+- concurrency: 75
+- errors OFF
+- latency OFF
+
+## Query: rps
+
+PromQL:
+
+```promql
+sum(rate(http_requests_total{exported_endpoint="/api/test"}[1m]))
+```
+
+Raw response:
+
+```json
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777673780.667,"132.03160319476436"]}]}}
+```
+
+## Query: p95
+
+PromQL:
+
+```promql
+histogram_quantile(0.95, sum(rate(http_request_latency_seconds_bucket[1m])) by (le))
+```
+
+Raw response:
+
+```json
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777673780.710,"0.0009504649265905384"]}]}}
+```
+
+## Query: http_5xx_rate
+
+PromQL:
+
+```promql
+sum(rate(http_requests_total{exported_endpoint="/api/test",status=~"5.."}[1m]))
+```
+
+Raw response:
+
+```json
+{"status":"success","data":{"resultType":"vector","result":[]}}
+```
+
+Interpretation: no 5xx series was present, treated as `0.0`.
+
+## Query: cpu_sat
+
+PromQL:
+
+```promql
+sum(rate(container_cpu_usage_seconds_total{namespace="default",pod=~"controllable-backend-.*",container!="POD"}[1m])) / 0.5
+```
+
+Raw response:
+
+```json
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777673780.801,"1.883974097815816"]}]}}
+```
+
+## Query: cpu_limit
+
+PromQL:
+
+```promql
+sum(kube_pod_container_resource_limits{namespace="default",pod=~"controllable-backend-.*",resource="cpu"})
+```
+
+Raw response:
+
+```json
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{},"value":[1777673780.865,"0.5"]}]}}
+```
+

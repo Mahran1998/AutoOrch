@@ -1,0 +1,40 @@
+# M8-Calibrate Cleanup Status
+
+## Loadgenerator Environment
+
+```json
+[{"name":"TARGET","value":"http://controllable-backend:5000/api/test"},{"name":"METRICS_PORT","value":"8080"},{"name":"RPS","value":"0"},{"name":"CONCURRENCY","value":"1"}]
+```
+
+## Deployment State
+
+```text
+NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
+controllable-backend   1/1     1            1           8d
+autoorch-webhook       1/1     1            1           176d
+loadgenerator          1/1     1            1           175d
+```
+
+## Fault Injection State
+
+```text
+error_injection_enabled 0.0
+latency_injection_enabled 0.0
+```
+
+## Action Mode
+
+```text
+stub
+```
+
+## PrometheusRule State
+
+```text
+No resources found in default namespace.
+```
+
+## Port-Forward State
+
+No calibration port-forwards remained. The only `pgrep` match was the `pgrep` command itself.
+
