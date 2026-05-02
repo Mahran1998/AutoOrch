@@ -1,0 +1,31 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: autoorch-notifyhuman-restart-second
+  namespace: default
+  labels:
+    release: prometheus-stack
+    purpose: autoorch-m10
+spec:
+  groups:
+    - name: autoorch-m10-notifyhuman-second.rules
+      rules:
+        - alert: AutoOrchNotifyHumanRestartFaultSecond
+          expr: |
+            (
+              sum(rate(http_requests_total{exported_endpoint="/api/test",status=~"5.."}[1m])) >= 0.20
+            )
+            and
+            (
+              histogram_quantile(0.95, sum(rate(http_request_latency_seconds_bucket[1m])) by (le)) > 0.50
+            )
+          for: 0s
+          labels:
+            severity: warning
+            namespace: default
+            service: controllable-backend
+            deployment: controllable-backend
+            m10_test: "true"
+          annotations:
+            summary: AutoOrch M10 second restart-like candidate
+            description: Second M10 restart-like alert. Expected AutoOrch result is notify_human due to repeated_action.
