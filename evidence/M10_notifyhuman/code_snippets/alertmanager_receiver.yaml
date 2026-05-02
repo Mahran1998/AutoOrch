@@ -1,0 +1,33 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: autoorch-m10-notifyhuman-route
+  namespace: default
+spec:
+  route:
+    receiver: autoorch-webhook
+    groupBy:
+      - alertname
+      - namespace
+      - deployment
+    groupWait: 0s
+    groupInterval: 15s
+    repeatInterval: 5m
+    matchers:
+      - name: m10_test
+        matchType: =
+        value: "true"
+      - name: service
+        matchType: =
+        value: controllable-backend
+      - name: deployment
+        matchType: =
+        value: controllable-backend
+  receivers:
+    - name: autoorch-webhook
+      webhookConfigs:
+        - url: http://autoorch-webhook.default.svc.cluster.local:8080/alert
+          sendResolved: false
+          maxAlerts: 1
+          timeout: 30s
+

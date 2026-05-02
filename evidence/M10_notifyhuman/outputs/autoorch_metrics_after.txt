@@ -1,0 +1,14 @@
+AutoOrch metrics after M10.
+
+```text
+autoorch_alerts_received_total 3.0
+autoorch_decisions_total{decision="auto_restart"} 1.0
+autoorch_decisions_total{decision="notify_human"} 2.0
+autoorch_notify_human_total 2.0
+autoorch_actions_total{action="auto_restart",status="simulated"} 1.0
+autoorch_actions_total{action="notify_human",status="simulated"} 2.0
+autoorch_restart_model_predictions_total{result="above_threshold"} 3.0
+```
+
+Acceptance uses the first `notify_human` decision, produced by the second planned M10 alert. A third Alertmanager repeat arrived before the deleted first alert fully resolved and also became `notify_human`; it was harmless because `ACTION_MODE=stub`.
+

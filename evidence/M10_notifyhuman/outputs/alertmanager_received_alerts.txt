@@ -1,0 +1,17 @@
+Alertmanager evidence for M10.
+
+The M10 route was active while the first and second alerts were delivered:
+
+```text
+receiver: default/autoorch-m10-notifyhuman-route/autoorch-webhook
+```
+
+The AutoOrch audit log confirms POST delivery from Alertmanager for both planned alerts:
+
+```text
+AutoOrchNotifyHumanRestartFaultFirst  -> receiver default/autoorch-m10-notifyhuman-route/autoorch-webhook
+AutoOrchNotifyHumanRestartFaultSecond -> receiver default/autoorch-m10-notifyhuman-route/autoorch-webhook
+```
+
+Late Alertmanager API samples after cleanup showed M10 alerts still present until their natural `endsAt` resolution, but with receiver `null` because the temporary M10 AlertmanagerConfig had already been deleted. That late state is expected and does not affect the proof; AutoOrch logs show the actual routed POSTs during the test window.
+

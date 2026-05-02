@@ -1,0 +1,42 @@
+Preflight:
+
+```text
+NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
+controllable-backend   1/1     1            1           9d
+autoorch-webhook       1/1     1            1           177d
+loadgenerator          1/1     1            1           176d
+```
+
+AutoOrch settings:
+
+```text
+ACTION_MODE=stub
+CONSECUTIVE_ESCALATION_COUNT=2
+CONSECUTIVE_MEMORY_SECONDS=300
+```
+
+Load and fault settings:
+
+```text
+RPS=20
+CONCURRENCY=15
+LATENCY_MS=700
+errors ON
+```
+
+Feature state during first alert:
+
+```text
+error_injection_enabled 1.0
+latency_injection_enabled 700.0
+```
+
+Final deployment state:
+
+```text
+NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
+controllable-backend   1/1     1            1           9d
+autoorch-webhook       1/1     1            1           177d
+loadgenerator          1/1     1            1           176d
+```
+

@@ -1,5 +1,7 @@
 # M10 Plan: NotifyHuman Safety Escalation Proof
 
+Execution note: this plan was later executed successfully; see `summary.md` for the final result.
+
 Status: plan only. Do not execute until explicitly approved.
 
 ## Goal

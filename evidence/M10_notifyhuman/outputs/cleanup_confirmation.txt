@@ -1,0 +1,33 @@
+Cleanup confirmation:
+
+```text
+ACTION_MODE=stub
+error_injection_enabled 0.0
+latency_injection_enabled 0.0
+```
+
+Deployments:
+
+```text
+NAME                   READY   UP-TO-DATE   AVAILABLE   AGE
+controllable-backend   1/1     1            1           9d
+autoorch-webhook       1/1     1            1           177d
+loadgenerator          1/1     1            1           176d
+```
+
+PrometheusRule cleanup:
+
+```text
+No resources found in default namespace.
+```
+
+AlertmanagerConfig cleanup:
+
+```text
+NAME                            AGE
+autoorch-m6-test-route          6d
+autoorch-m7-autorestart-route   5d20h
+```
+
+The M10-specific `autoorch-m10-notifyhuman-route` was deleted. Existing M6/M7 route resources were not touched.
+

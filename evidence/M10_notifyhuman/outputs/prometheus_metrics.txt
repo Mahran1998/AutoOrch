@@ -1,0 +1,35 @@
+Prometheus feature queries during M10 restart-like load.
+
+Initial sampled values after load/fault activation:
+
+```text
+rps:             19.404079168643005
+p95:             0.9830508474576272
+http_5xx_rate:   19.40407916864301
+cpu_sat:         0.19408837491361702
+```
+
+First AutoOrch audit feature vector:
+
+```text
+rps:             18.818948734587927
+p95:             0.991398158803222
+http_5xx_rate:   18.818948734587927
+cpu_sat:         0.17954434350597967
+```
+
+Second AutoOrch audit feature vector:
+
+```text
+rps:             18.8040616773223
+p95:             0.9908151549942594
+http_5xx_rate:   18.8040616773223
+cpu_sat:         0.18685141215884504
+```
+
+Alert state after the second rule loaded:
+
+```json
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"ALERTS","alertname":"AutoOrchNotifyHumanRestartFaultSecond","alertstate":"firing","deployment":"controllable-backend","m10_test":"true","namespace":"default","service":"controllable-backend","severity":"warning"},"value":[1777750637.360,"1"]}]}}
+```
+
