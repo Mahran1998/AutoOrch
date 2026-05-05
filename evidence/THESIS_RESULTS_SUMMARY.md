@@ -89,5 +89,5 @@ Evidence folder: [M10_notifyhuman](M10_notifyhuman/)
 - M9 is the alert-noise reduction proof: AutoOrch received a benign alert and deliberately skipped remediation.
 - M10 is the safety/escalation proof: repeated restart candidates were converted to `notify_human`.
 - Mention controlled prototype scope explicitly. The model results and runtime scenarios prove feasibility under controlled conditions, not broad production generalization.
-- Screenshots are deferred to M12. Use the `screenshots/README.md` files in each evidence package to capture clean thesis figures later.
+- Screenshot evidence has been captured and committed separately under `evidence/_screenshots/`. Use `evidence/FIGURE_INVENTORY.md` to select the final thesis figures.
 - Use formatted code snippets from each `code_snippets/` folder instead of screenshots of code. Screenshots are better reserved for Prometheus, Alertmanager, terminal proof, and Kubernetes state.

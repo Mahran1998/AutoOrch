@@ -1,6 +1,6 @@
 # AutoOrch Evidence Index
 
-This folder contains the implementation evidence for the final AutoOrch evaluation scenarios. Each evidence package is designed to stand alone with commands, manifests, outputs, logs, and code snippets. Manual screenshots are deferred to M12 and tracked in each `screenshots/README.md`.
+This folder contains the implementation evidence for the final AutoOrch evaluation scenarios. Each evidence package is designed to stand alone with commands, manifests, outputs, logs, and code snippets. Manual thesis screenshots have also been captured and committed separately under [`_screenshots/`](_screenshots/).
 
 ## Evidence Overview
 
@@ -116,5 +116,4 @@ with four alternative flows:
 
 ## Screenshot Status
 
-Screenshots are intentionally deferred to M12. The current evidence packages already include machine-verifiable proof through logs, command output, manifests, and code snippets. For the thesis, use formatted code snippets rather than screenshots of code unless a visual appendix is needed.
-
+Screenshot evidence has been captured and committed separately under [`_screenshots/`](_screenshots/). The machine-verifiable evidence remains the source of truth through logs, command output, manifests, and code snippets. For the thesis, use formatted code snippets rather than screenshots of code unless a visual appendix is needed.
